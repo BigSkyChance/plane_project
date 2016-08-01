@@ -7,6 +7,7 @@ using namespace std;
 #include "Plane.h"
 #include "ReadInteger.h"
 #include "ReadString.h"
+#include "Party.h"
 
 void main ()
 	{
@@ -14,6 +15,10 @@ void main ()
 	Plane	Bravo;
 	Plane	Lounge;
 	Party	Temp;
+	UINT	z = 0;
+	int		a = 0;
+	int		b = 0;
+	int		l = 0;
 
 	cout << "Welome to MasterTicket Version 1.0" << endl;
 	cout << "Please enter 'Startup' to initialize planes" << endl;
@@ -48,7 +53,11 @@ void main ()
 								cout << "Number of Seats: " << Alfa.NumSeats << endl;
 								cout << "Number of Empty Seats: " << Alfa.NumSeatsEmpty << endl;
 								cout << "Number of Parties: " << Alfa.NumParties << endl;
-								// display parties on the plane
+								for (z = 0; z < Alfa.NumParties; z++)
+								{
+									cout << Alfa.Parties[z].Name << endl;
+									cout << z << endl;
+								}
 								break;
 			case CmdBravo:
 								cout << "Status of Plane Bravo" << endl;
@@ -100,8 +109,11 @@ void main ()
 									{
 										Alfa.NumSeatsEmpty = Alfa.NumSeatsEmpty - Temp.Size; // Takes away those seats
 										Alfa.NumParties++;
-										// How to store the name into an array?
+										Alfa.Parties[a].Name = Temp.Name;
+										Alfa.Parties[a].Size = Temp.Size;
+										a++; // a is Alfas array variable.
 										cout << Temp.Name << " is cleared to board plane Alfa, there are " << Alfa.NumSeatsEmpty << " seats left" << endl;
+										delete[] Temp.Name, Temp.Size, Temp.WhichPlane; //RETURN THE MEMORY
 										if (Alfa.NumSeatsEmpty == 0)
 										{
 											cout << "TIME FOR TAKEOFF" << endl;
