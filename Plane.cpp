@@ -28,3 +28,4 @@ Planes GetPlane ()
 	delete [] WhichPlane;
 	return InvalidPlane;
 	}
+

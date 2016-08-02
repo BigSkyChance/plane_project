@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -16,13 +17,15 @@ void main ()
 	Plane	Lounge;
 	Party	Temp;
 	UINT	z = 0;
-	int		a = 0;
-	int		b = 0;
-	int		l = 0;
+	UINT	a = 0;
+	UINT	b = 0;
+	UINT	l = 0;
+	UINT	i;
+	UINT	j;
 
 	cout << "Welome to MasterTicket Version 1.0" << endl;
 	cout << "Please enter 'Startup' to initialize planes" << endl;
-	while (true)	// loop
+	while (true)	
 		{
 			cout << "\nENTER A COMMAND: ";
 		switch (GetCommand ())
@@ -43,9 +46,11 @@ void main ()
 								Bravo.NumSeatsEmpty = Bravo.NumSeats;
 								Bravo.Parties		= new Party[Bravo.NumSeats];
 								cout << "Planes are set up!" << endl;
+								cout << "This airports' Lounge has 50 seats" << endl;
 								Lounge.NumSeats		= 50;
 								Lounge.NumSeatsEmpty = Lounge.NumSeats;
 								Lounge.NumParties	 = 0;
+								Lounge.Parties		 = new Party[Lounge.NumSeats];
 								break;
 
 			case CmdAlfa:
@@ -55,8 +60,7 @@ void main ()
 								cout << "Number of Parties: " << Alfa.NumParties << endl;
 								for (z = 0; z < Alfa.NumParties; z++)
 								{
-									cout << Alfa.Parties[z].Name << endl;
-									cout << z << endl;
+									cout << Alfa.Parties[z].Name << " party of " << Alfa.Parties[z].Size << endl;
 								}
 								break;
 			case CmdBravo:
@@ -64,22 +68,59 @@ void main ()
 								cout << "Number of Seats: " << Bravo.NumSeats << endl;
 								cout << "Number of Empty Seats: " << Bravo.NumSeatsEmpty << endl;
 								cout << "Number of Parties: " << Bravo.NumParties << endl;
-								//display parties on plane
+								for (z = 0; z < Bravo.NumParties; z++)
+								{
+									cout << Bravo.Parties[z].Name << " party of " << Bravo.Parties[z].Size << endl;
+								}
 								break;
 			case CmdLounge:
-								cout << "Command Lounge Entered" << endl;
+								cout << "Status of the Lounge" << endl;
+								cout << "Number of chairs in lounge: " << Lounge.NumSeats << endl;
+								cout << "Number of chairs left: " << Lounge.NumSeatsEmpty << endl;
+								cout << "Number of Parties: " << Lounge.NumParties << endl;
+								for (z = 0; z < Lounge.NumParties; z++)
+								{
+									cout << Lounge.Parties[z].Name << " party of " << Lounge.Parties[z].Size;
+									cout << " waiting for plane: ";
+									if (Lounge.Parties[z].WhichPlane == 0)
+										cout << "alfa" << endl;
+									if (Lounge.Parties[z].WhichPlane == 1)
+										cout << "bravo" << endl;
+								}
 								break;
 			case CmdFly:
 								cout << "Command Fly Entered" << endl;
 								cout << "Which plane would you like to fly? ";
 								Temp.WhichPlane = GetPlane();
-								cout << "\n";
+								if (Temp.WhichPlane == -1)
+								{
+									cout << "Can't fly a plane that's not in the hangar." << endl;
+									break;
+								}
 								if (Temp.WhichPlane == 0)
 								{
 									cout << "Alfa is cleared for takeoff" << endl;
 									Alfa.NumSeatsEmpty = Alfa.NumSeats;
 									Alfa.NumParties = 0;
-									// delete party array
+									a = 0;
+									delete[] Alfa.Parties;
+									Alfa.Parties = new Party[Alfa.NumSeats];
+									for (i = 0; i < Lounge.NumParties; i++)
+									{
+										if ((Lounge.Parties[i].WhichPlane == 0) && (Lounge.Parties[i].Size <= Alfa.NumSeatsEmpty))
+										{
+											Alfa.NumSeatsEmpty = Alfa.NumSeatsEmpty - Lounge.Parties[i].Size;
+											Alfa.NumParties++;
+											Alfa.Parties[a] = Lounge.Parties[i];
+											a++;
+											for (j = i + 1; j < Lounge.NumParties; j++)
+											{
+												Lounge.Parties[j - 1] = Lounge.Parties[j];
+											}
+											Lounge.NumParties--;
+										}
+
+									}
 									break;
 								}
 								if (Temp.WhichPlane == 1)
@@ -87,7 +128,26 @@ void main ()
 									cout << "Bravo is cleared for takeoff" << endl;
 									Bravo.NumSeatsEmpty = Bravo.NumSeats;
 									Bravo.NumParties = 0;
-									// delete party array
+									delete[] Bravo.Parties;
+									Bravo.Parties = new Party[Bravo.NumSeats];
+									b = 0;
+									cout << "Bravo has flown at the speed of light and has returned... Loading the parties in Lounge." << endl;
+									for (i = 0; i < Lounge.NumParties; i++)
+									{
+										if ((Lounge.Parties[i].WhichPlane == 1) && (Lounge.Parties[i].Size <= Bravo.NumSeatsEmpty))
+										{
+											Bravo.NumSeatsEmpty = Bravo.NumSeatsEmpty - Lounge.Parties[i].Size;
+											Bravo.NumParties++;
+											Bravo.Parties[a] = Lounge.Parties[i];
+											b++;
+											for (j = i + 1; j < Lounge.NumParties; j++)
+											{
+												Lounge.Parties[j - 1] = Lounge.Parties[j];
+											}
+											Lounge.NumParties--;
+										}
+
+									}
 									break;
 								}
 								else
@@ -97,6 +157,11 @@ void main ()
 								cout << "Arrive Entered." << endl;
 								cout << "Please enter the plane they wish to board: ";
 								Temp.WhichPlane	= GetPlane ();
+								if (Temp.WhichPlane == -1)
+								{
+									cout << "We don't have that plane in the hangar" << endl;
+									break;
+								}
 								cout << "Enter name: ";
 								Temp.Name		= ReadString ();
 								cout << "Name: " << Temp.Name << " \tEnter Size: ";
@@ -107,16 +172,38 @@ void main ()
 									cout << " Plane Alfa" << endl;
 									if (Temp.Size <= Alfa.NumSeatsEmpty)
 									{
-										Alfa.NumSeatsEmpty = Alfa.NumSeatsEmpty - Temp.Size; // Takes away those seats
+										Alfa.NumSeatsEmpty = Alfa.NumSeatsEmpty - Temp.Size;
 										Alfa.NumParties++;
-										Alfa.Parties[a].Name = Temp.Name;
-										Alfa.Parties[a].Size = Temp.Size;
-										a++; // a is Alfas array variable.
+										Alfa.Parties[a] = Temp;
+										a++;
 										cout << Temp.Name << " is cleared to board plane Alfa, there are " << Alfa.NumSeatsEmpty << " seats left" << endl;
-										delete[] Temp.Name, Temp.Size, Temp.WhichPlane; //RETURN THE MEMORY
 										if (Alfa.NumSeatsEmpty == 0)
 										{
-											cout << "TIME FOR TAKEOFF" << endl;
+											cout << "Alfa is full, and is cleared for takeoff..." << endl;
+											Alfa.NumSeatsEmpty = Alfa.NumSeats;
+											Alfa.NumParties = 0;
+											delete[] Alfa.Parties;
+											Alfa.Parties = new Party[Alfa.NumSeats];
+											a = 0;
+											// below this is the lounge loading
+											cout << "Alfa has flown at the speed of light and has returned... Loading the parties in Lounge." << endl;
+											for (i = 0; i < Lounge.NumParties; i++)
+											{
+												if ((Lounge.Parties[i].WhichPlane == 0) && (Lounge.Parties[i].Size <= Alfa.NumSeatsEmpty))
+												{
+													Alfa.NumSeatsEmpty = Alfa.NumSeatsEmpty - Lounge.Parties[i].Size;
+													Alfa.NumParties++;
+													Alfa.Parties[a] = Lounge.Parties[i];
+													a++;
+													for (j = i + 1; j < Lounge.NumParties; j++)
+													{
+														Lounge.Parties[j - 1] = Lounge.Parties[j];
+													}
+													Lounge.NumParties--;
+												}
+	
+											}
+
 											break;
 										}
 										else
@@ -133,7 +220,8 @@ void main ()
 											cout << "There's not enough seats on this flight, sending to lounge." << endl;
 											Lounge.NumSeatsEmpty = Lounge.NumSeatsEmpty - Temp.Size;
 											Lounge.NumParties++;
-											// Store name in array for that party
+											Lounge.Parties[l] = Temp;
+											l++;
 											break;
 										}
 											else
@@ -148,13 +236,36 @@ void main ()
 									cout << " Plane Bravo" << endl;
 									if (Temp.Size <= Bravo.NumSeatsEmpty)
 									{
-										Bravo.NumSeatsEmpty = Bravo.NumSeatsEmpty - Temp.Size; // Takes away those seats
+										Bravo.NumSeatsEmpty = Bravo.NumSeatsEmpty - Temp.Size;
 										Bravo.NumParties++;
-										// How to store the name into an array?
+										Bravo.Parties[b] = Temp;
+										b++;
 										cout << Temp.Name << " is cleared to board plane Bravo, there are " << Bravo.NumSeatsEmpty << " seats left" << endl;
 										if (Bravo.NumSeatsEmpty == 0)
 										{
-											cout << "TIME FOR TAKEOFF" << endl;
+											cout << "Bravo is full, and is cleared for takeoff" << endl;
+											Bravo.NumSeatsEmpty = Bravo.NumSeats;
+											Bravo.NumParties = 0;
+											delete[] Bravo.Parties;
+											Bravo.Parties = new Party[Bravo.NumSeats];
+											b = 0;
+											cout << "Bravo has flown at the speed of light and has returned... Loading the parties in Lounge." << endl;
+											for (i = 0; i < Lounge.NumParties; i++)
+											{
+												if ((Lounge.Parties[i].WhichPlane == 1) && (Lounge.Parties[i].Size <= Bravo.NumSeatsEmpty))
+												{
+													Bravo.NumSeatsEmpty = Bravo.NumSeatsEmpty - Lounge.Parties[i].Size;
+													Bravo.NumParties++;
+													Bravo.Parties[a] = Lounge.Parties[i];
+													b++;
+													for (j = i + 1; j < Lounge.NumParties; j++)
+													{
+														Lounge.Parties[j - 1] = Lounge.Parties[j];
+													}
+													Lounge.NumParties--;
+												}
+
+											}
 											break;
 										}
 										else
@@ -172,7 +283,8 @@ void main ()
 												cout << "There's not enough seats on this flight, sending to lounge." << endl;
 												Lounge.NumSeatsEmpty = Lounge.NumSeatsEmpty - Temp.Size;
 												Lounge.NumParties++;
-												// Store name in array for that party
+												Lounge.Parties[l] = Temp;
+												l++;
 												break;
 											}
 											else
@@ -186,7 +298,13 @@ void main ()
 								break;
 			case CmdShutdown:
 								cout << "Command Shutdown Entered" << endl;
-								// Closes the airport, but possibly load the remaining passengers from the lounge onto planes that could fit them?
+								cout << "Planes will contiue to load and fly untill lounge is empty" << endl;
+								if (Lounge.NumParties == 0)
+								{
+									cout << "The Lounge is empty, shutting down" << endl;
+									exit(0);
+								}
+								
 								break;
 			default:
 								cout << "Internal error, please contact customer support" << endl;
