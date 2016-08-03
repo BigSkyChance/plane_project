@@ -162,23 +162,35 @@ void main ()
 									a = 0;
 									delete[] Alfa.Parties;
 									Alfa.Parties = new Party[Alfa.NumSeats];
-									for (i = 0; i < Lounge.NumParties; i++) // Load waiting customers
+									cout << "Alfa has landed, loading lounge." << endl;
+									for (i = 0; i <= Lounge.NumParties; i++) // Load waiting customers
 									{
 										if ((Lounge.Parties[i].WhichPlane == 0) && (Lounge.Parties[i].Size <= Alfa.NumSeatsEmpty))
 										{
 											Alfa.NumSeatsEmpty = Alfa.NumSeatsEmpty - Lounge.Parties[i].Size;
 											Alfa.NumParties++;
 											Alfa.Parties[a] = Lounge.Parties[i];
-											a++;
 											Lounge.NumSeatsEmpty = Lounge.NumSeatsEmpty + Lounge.Parties[i].Size;
-											l--;
 											for (j = i + 1; j < Lounge.NumParties; j++)
 											{
-												Lounge.Parties[i] = Lounge.Parties[j];
+												Lounge.Parties[j - 1] = Lounge.Parties[j];
 											}
+											a++;
+											i--; // If 0 matches, and 1 is also for alfa, 1 will move to 0, then wouldn't get scanned next loop.
+											Lounge.NumParties--;
+											l--;
+										}
+										if (Alfa.NumSeatsEmpty == 0)
+										{
+											cout << "Lounge filled the plane, taking off." << endl;
+											Alfa.NumSeatsEmpty = Alfa.NumSeats;
+											Alfa.NumParties = 0;
+											a = 0;
+											delete[] Alfa.Parties;
+											Alfa.Parties = new Party[Alfa.NumSeats];
 										}
 									}
-									Lounge.NumParties = Lounge.NumParties - a;
+									cout << "\nFlight Command for Alfa has completed." << endl;
 									break;
 								}
 								if (Temp.WhichPlane == 1)
@@ -194,7 +206,7 @@ void main ()
 									delete[] Bravo.Parties;
 									Bravo.Parties = new Party[Bravo.NumSeats];
 									b = 0;
-									cout << "Bravo has flown at the speed of light and has returned... Loading the parties in Lounge." << endl;
+									cout << "Bravo has returned, loading parties from the lounge." << endl;
 									for (i = 0; i < Lounge.NumParties; i++) // Load Customers that are waiting.
 									{
 										if ((Lounge.Parties[i].WhichPlane == 1) && (Lounge.Parties[i].Size <= Bravo.NumSeatsEmpty))
@@ -202,16 +214,28 @@ void main ()
 											Bravo.NumSeatsEmpty = Bravo.NumSeatsEmpty - Lounge.Parties[i].Size;
 											Bravo.NumParties++;
 											Bravo.Parties[b] = Lounge.Parties[i];
-											b++;
 											Lounge.NumSeatsEmpty = Lounge.NumSeatsEmpty + Lounge.Parties[i].Size;
-											l--;
 											for (j = i + 1; j < Lounge.NumParties; j++)
 											{
-												Lounge.Parties[i] = Lounge.Parties[j];
+												Lounge.Parties[j - 1] = Lounge.Parties[j];
 											}
+											b++;
+											l--;
+											Lounge.NumParties--;
+											i--;
+										}
+										if (Bravo.NumSeatsEmpty == 0)
+										{
+											cout << "The lounge has filled Bravo, flying plane." << endl;
+											Lounge.NumParties = Lounge.NumParties - b;
+											Bravo.NumSeatsEmpty = Bravo.NumSeats;
+											Bravo.NumParties = 0;
+											delete[] Bravo.Parties;
+											Bravo.Parties = new Party[Bravo.NumSeats];
+											b = 0;
 										}
 									}
-									Lounge.NumParties = Lounge.NumParties - b;
+									cout << "Flight Command for Bravo has completed" << endl;
 									break;
 								}
 								else
@@ -251,27 +275,37 @@ void main ()
 											}
 											Alfa.NumSeatsEmpty = Alfa.NumSeats;
 											Alfa.NumParties = 0;
+											a = 0;
 											delete[] Alfa.Parties;
 											Alfa.Parties = new Party[Alfa.NumSeats];
-											a = 0;
-											cout << "Alfa has flown at the speed of light and has returned... Loading the parties in Lounge." << endl;
-											for (i = 0; i < Lounge.NumParties; i++)
+											cout << "Alfa has landed, loading lounge." << endl;
+											for (i = 0; i <= Lounge.NumParties; i++) // Load waiting customers
 											{
 												if ((Lounge.Parties[i].WhichPlane == 0) && (Lounge.Parties[i].Size <= Alfa.NumSeatsEmpty))
 												{
 													Alfa.NumSeatsEmpty = Alfa.NumSeatsEmpty - Lounge.Parties[i].Size;
 													Alfa.NumParties++;
 													Alfa.Parties[a] = Lounge.Parties[i];
-													a++;
 													Lounge.NumSeatsEmpty = Lounge.NumSeatsEmpty + Lounge.Parties[i].Size;
-													l--;
 													for (j = i + 1; j < Lounge.NumParties; j++)
 													{
 														Lounge.Parties[j - 1] = Lounge.Parties[j];
 													}
+													a++;
+													i--; // If 0 matches, and 1 is also for alfa, 1 will move to 0, then wouldn't get scanned next loop.
+													Lounge.NumParties--;
+													l--;
+												}
+												if (Alfa.NumSeatsEmpty == 0)
+												{
+													cout << "Lounge filled the plane, taking off." << endl;
+													Alfa.NumSeatsEmpty = Alfa.NumSeats;
+													Alfa.NumParties = 0;
+													a = 0;
+													delete[] Alfa.Parties;
+													Alfa.Parties = new Party[Alfa.NumSeats];
 												}
 											}
-											Lounge.NumParties = Lounge.NumParties - a;
 											break;
 										}
 										else
@@ -322,24 +356,35 @@ void main ()
 											delete[] Bravo.Parties;
 											Bravo.Parties = new Party[Bravo.NumSeats];
 											b = 0;
-											cout << "Bravo has flown at the speed of light and has returned... Loading the parties in Lounge." << endl;
-											for (i = 0; i < Lounge.NumParties; i++) // Gets People waiting for Bravo out of the Lounge.
+											cout << "Bravo has returned, loading parties from the lounge." << endl;
+											for (i = 0; i < Lounge.NumParties; i++) // Load Customers that are waiting.
 											{
 												if ((Lounge.Parties[i].WhichPlane == 1) && (Lounge.Parties[i].Size <= Bravo.NumSeatsEmpty))
 												{
 													Bravo.NumSeatsEmpty = Bravo.NumSeatsEmpty - Lounge.Parties[i].Size;
 													Bravo.NumParties++;
 													Bravo.Parties[b] = Lounge.Parties[i];
-													b++;
 													Lounge.NumSeatsEmpty = Lounge.NumSeatsEmpty + Lounge.Parties[i].Size;
-													l--;
 													for (j = i + 1; j < Lounge.NumParties; j++)
 													{
-														Lounge.Parties[i] = Lounge.Parties[j];
+														Lounge.Parties[j - 1] = Lounge.Parties[j];
 													}
+													b++;
+													l--;
+													Lounge.NumParties--;
+													i--;
+												}
+												if (Bravo.NumSeatsEmpty == 0)
+												{
+													cout << "The lounge has filled Bravo, flying plane." << endl;
+													Lounge.NumParties = Lounge.NumParties - b;
+													Bravo.NumSeatsEmpty = Bravo.NumSeats;
+													Bravo.NumParties = 0;
+													delete[] Bravo.Parties;
+													Bravo.Parties = new Party[Bravo.NumSeats];
+													b = 0;
 												}
 											}
-											Lounge.NumParties = Lounge.NumParties - b;
 											break;
 										}
 										else
@@ -388,13 +433,15 @@ void main ()
 											Alfa.NumSeatsEmpty = Alfa.NumSeatsEmpty - Lounge.Parties[i].Size;
 											Alfa.NumParties++;
 											Alfa.Parties[a] = Lounge.Parties[i];
-											a++;
 											Lounge.NumSeatsEmpty = Lounge.NumSeatsEmpty + Lounge.Parties[i].Size;
-											l--;
 											for (j = i + 1; j < Lounge.NumParties; j++)
 											{
 												Lounge.Parties[j - 1] = Lounge.Parties[j];
 											}
+											a++;
+											l--;
+											Lounge.NumParties--;
+											i--;
 										}
 									} // Boarded all the customers waiting for Alfa.
 									cout << "Boarding Call for Customers waiting for Bravo, boarding in order of arrival...\n" << endl;
@@ -405,13 +452,15 @@ void main ()
 											Bravo.NumSeatsEmpty = Bravo.NumSeatsEmpty - Lounge.Parties[i].Size;
 											Bravo.NumParties++;
 											Bravo.Parties[b] = Lounge.Parties[i];
-											b++;
 											Lounge.NumSeatsEmpty = Lounge.NumSeatsEmpty + Lounge.Parties[i].Size;
-											l--;
 											for (j = i + 1; j < Lounge.NumParties; j++)
 											{
 												Lounge.Parties[j - 1] = Lounge.Parties[j];
 											}
+											b++;
+											l--;
+											Lounge.NumParties--;
+											i--;
 										}
 									} // Boarded all Parties waiting for Bravo
 
