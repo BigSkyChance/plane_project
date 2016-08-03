@@ -7,6 +7,8 @@ using namespace std;
 
 char * CmdStrings [NumCommands] =	{
 									"Startup",
+									"Help",
+									"Hangar",
 									"Alfa",
 									"Bravo",
 									"Lounge",
