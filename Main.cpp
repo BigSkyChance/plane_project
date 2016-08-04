@@ -22,9 +22,12 @@ void main ()
 	UINT	l = 0;
 	UINT	i;
 	UINT	j;
+	Alfa.NumSeats = 0;
+	Bravo.NumSeats = 0;
+	Lounge.NumSeats = 0; // These are so that CmdStatus will not break the program if entered before intiialization.
 
-	cout << "Welome to MasterTicket Version 3.0, built for Tree Top Airways!" << endl;
-	cout << "Please enter 'Startup' to initialize planes.\nEnter 'Help' for a list of commands." << endl;
+	cout << "Welome to MasterTicket Release V1.0, built for Tree Top Airways!" << endl;
+	cout << "Please use ALfa, Bravo, and Lounge to setup the Airport for the day! use 'Help' for Commands" << endl;
 	while (true)	
 		{
 			cout << "\nENTER A COMMAND: ";
@@ -33,115 +36,95 @@ void main ()
 			case InvalidCmd:
 								cout << "Invalid Command Entered" << endl;
 								break;
-			case CmdStartup:
-								cout << "Starting up MasterTicket" << endl;
-								cout << "Enter Number of Seats on Alfa: ";
-								Alfa.NumSeats		= ReadInteger();
-								Alfa.NumParties		= 0;
-								Alfa.NumSeatsEmpty	= Alfa.NumSeats;
-								Alfa.Parties		= new Party[Alfa.NumSeats];
-								cout << "Enter Number of Seats on Bravo: ";
-								Bravo.NumSeats		= ReadInteger();
-								Bravo.NumParties	= 0;
-								Bravo.NumSeatsEmpty = Bravo.NumSeats;
-								Bravo.Parties		= new Party[Bravo.NumSeats];
-								cout << "Planes are set up!" << endl;
-								cout << "This airports' Lounge has 50 seats" << endl;
-								Lounge.NumSeats		= 50;
-								Lounge.NumSeatsEmpty = Lounge.NumSeats;
-								Lounge.NumParties	 = 0;
-								Lounge.Parties		 = new Party[Lounge.NumSeats];
+			case CmdStatus:
+								if (Alfa.NumSeats == 0 || Bravo.NumSeats == 0 || Lounge.NumSeats == 0)
+								{
+									cout << "Please initialize Alfa, Bravo, and Lounge before using this command." << endl;
+									break;
+								}
+								cout << "What would you like to see the status of?: ";
+								Temp.WhichPlane = GetPlane();
+								if (Temp.WhichPlane == 0)
+								{
+									cout << "Status of Plane Alfa" << endl;
+									cout << "Number of Seats: " << Alfa.NumSeats << endl;
+									cout << "Number of Empty Seats: " << Alfa.NumSeatsEmpty << endl;
+									cout << "Number of Parties: " << Alfa.NumParties << endl;
+									for (z = 0; z < Alfa.NumParties; z++)
+									{
+										cout << Alfa.Parties[z].Name << " party of " << Alfa.Parties[z].Size << endl;
+									}
+									break;
+								}
+								if (Temp.WhichPlane == 1)
+								{
+									cout << "Status of Plane Bravo" << endl;
+									cout << "Number of Seats: " << Bravo.NumSeats << endl;
+									cout << "Number of Empty Seats: " << Bravo.NumSeatsEmpty << endl;
+									cout << "Number of Parties: " << Bravo.NumParties << endl;
+									for (z = 0; z < Bravo.NumParties; z++)
+									{
+										cout << Bravo.Parties[z].Name << " party of " << Bravo.Parties[z].Size << endl;
+									}
+									break;
+								}
+								else
+								{
+									cout << "Status of the Lounge" << endl;
+									cout << "Number of chairs in lounge: " << Lounge.NumSeats << endl;
+									cout << "Number of chairs left: " << Lounge.NumSeatsEmpty << endl;
+									cout << "Number of Parties: " << Lounge.NumParties << endl;
+									for (z = 0; z < Lounge.NumParties; z++)
+									{
+										cout << Lounge.Parties[z].Name << " party of " << Lounge.Parties[z].Size;
+										cout << " waiting for plane: ";
+										if (Lounge.Parties[z].WhichPlane == 0)
+											cout << "alfa" << endl;
+										if (Lounge.Parties[z].WhichPlane == 1)
+											cout << "bravo" << endl;
+									}
+								}
 								break;
+
 			case CmdHelp:
 								cout << "Here's a list of Commands!";
-								cout << "\nStartup, This should only be entered at the start of the day to configure Plane Alfa & Bravo!";
-								cout << "\nHangar, This is if theres a change in aircraft size, only to be used for empty planes!";
-								cout << "\nAlfa, This will display the current status of plane Alfa.";
-								cout << "\nBravo, This will display the current status of plane Bravo";
-								cout << "\nLounge, This will show the curren status of the Airport Lounge.";
+								cout << "\nStatus, so you can see the parties and seats on the plane.";
+								cout << "\nAlfa, Sets up Plane Alfa";
+								cout << "\nBravo, Sets up Plane Bravo";
+								cout << "\nLounge, Sets up the Lounge for the Airport.";
 								cout << "\nFly, This will start the manual process of takeoff, this will fly the plane before boarding the lounge!";
 								cout << "\nArrive, Your most important command! Use this to gather customer information.";
 								cout << "\nShutdown, Shuts down ticketing terminal. Passengers will still be served in the order they arrived!";
 								cout << "\nEnter 'Help' at any time to display this message";
 								break;
-			case CmdHangar: // this command is to edit the Number of Seats on the planes!
-								cout << "Only use this in case of a plane change!" << endl;
-								cout << "Accessing the hangar, which plane would you like to change? ";
-								Temp.WhichPlane = GetPlane();
-								if (Temp.WhichPlane == 0)
-								{
-									cout << "You can now choose a larger or smaller aircraft to function as Plane Alfa" << endl;
-									if (Alfa.NumParties > 0)
-									{
-										cout << "This plane already has passengers, please fly Alfa before changing aircraft." << endl;
-										break;
-									}
-									delete[] Alfa.Parties;
-									cout << "Enter Number of Seats on Alfa: ";
-									Alfa.NumSeats = ReadInteger();
-									Alfa.NumParties = 0;
-									Alfa.NumSeatsEmpty = Alfa.NumSeats;
-									Alfa.Parties = new Party[Alfa.NumSeats];
-									break;
-								}
-								if (Temp.WhichPlane == 1)
-								{
-									cout << "You can now choose a larger or smaller aircraft to function as Plane Bravo" << endl;
-									if (Bravo.NumParties > 0)
-									{
-										cout << "This plane already has passengers, please fly Bravo before changing aircraft." << endl;
-										break;
-									}
-									delete[] Bravo.Parties;
-									cout << "Enter Number of Seats on Bravo: ";
-									Bravo.NumSeats = ReadInteger();
-									Bravo.NumParties = 0;
-									Bravo.NumSeatsEmpty = Bravo.NumSeats;
-									Bravo.Parties = new Party[Bravo.NumSeats];
-									break;
-								}
-								if (Temp.WhichPlane == -1)
-								{
-									cout << "Invalid Plane" << endl;
-									break;
-								}
+			
 			case CmdAlfa:
-								cout << "Status of Plane Alfa" << endl;
-								cout << "Number of Seats: " << Alfa.NumSeats << endl;
-								cout << "Number of Empty Seats: " << Alfa.NumSeatsEmpty << endl;
-								cout << "Number of Parties: " << Alfa.NumParties << endl;
-								for (z = 0; z < Alfa.NumParties; z++)
-								{
-									cout << Alfa.Parties[z].Name << " party of " << Alfa.Parties[z].Size << endl;
-								}
+								cout << "Enter Number of Seats on Alfa: ";
+								Alfa.NumSeats = ReadInteger();
+								Alfa.NumParties = 0;
+								Alfa.NumSeatsEmpty = Alfa.NumSeats;
+								Alfa.Parties = new Party[Alfa.NumSeats];
 								break;
 			case CmdBravo:
-								cout << "Status of Plane Bravo" << endl;
-								cout << "Number of Seats: " << Bravo.NumSeats << endl;
-								cout << "Number of Empty Seats: " << Bravo.NumSeatsEmpty << endl;
-								cout << "Number of Parties: " << Bravo.NumParties << endl;
-								for (z = 0; z < Bravo.NumParties; z++)
-								{
-									cout << Bravo.Parties[z].Name << " party of " << Bravo.Parties[z].Size << endl;
-								}
+								cout << "Enter Number of Seats on Bravo: ";
+								Bravo.NumSeats = ReadInteger();
+								Bravo.NumParties = 0;
+								Bravo.NumSeatsEmpty = Bravo.NumSeats;
+								Bravo.Parties = new Party[Bravo.NumSeats];
 								break;
 			case CmdLounge:
-								cout << "Status of the Lounge" << endl;
-								cout << "Number of chairs in lounge: " << Lounge.NumSeats << endl;
-								cout << "Number of chairs left: " << Lounge.NumSeatsEmpty << endl;
-								cout << "Number of Parties: " << Lounge.NumParties << endl;
-								for (z = 0; z < Lounge.NumParties; z++)
-								{
-									cout << Lounge.Parties[z].Name << " party of " << Lounge.Parties[z].Size;
-									cout << " waiting for plane: ";
-									if (Lounge.Parties[z].WhichPlane == 0)
-										cout << "alfa" << endl;
-									if (Lounge.Parties[z].WhichPlane == 1)
-										cout << "bravo" << endl;
-								}
+								cout << "Enter Number of Seats in the Lounge: ";
+								Lounge.NumSeats = ReadInteger();
+								Lounge.NumSeatsEmpty = Lounge.NumSeats;
+								Lounge.NumParties = 0;
+								Lounge.Parties = new Party[Lounge.NumSeats];
 								break;
 			case CmdFly:
-								cout << "Command Fly Entered" << endl;
+								if (Alfa.NumSeats == 0 || Bravo.NumSeats == 0 || Lounge.NumSeats == 0)
+								{
+									cout << "Please initialize Alfa, Bravo, and Lounge before using this command." << endl;
+									break;
+								}
 								cout << "Which plane would you like to fly? ";
 								Temp.WhichPlane = GetPlane();
 								if (Temp.WhichPlane == -1)
@@ -162,6 +145,11 @@ void main ()
 									a = 0;
 									delete[] Alfa.Parties;
 									Alfa.Parties = new Party[Alfa.NumSeats];
+									if (Lounge.NumParties == 0)
+									{
+										cout << "Flight Complete." << endl;
+										break;
+									}
 									cout << "Alfa has landed, loading lounge." << endl;
 									for (i = 0; i <= Lounge.NumParties; i++) // Load waiting customers
 									{
@@ -206,6 +194,11 @@ void main ()
 									delete[] Bravo.Parties;
 									Bravo.Parties = new Party[Bravo.NumSeats];
 									b = 0;
+									if (Lounge.NumParties == 0)
+									{
+										cout << "Flight Complete." << endl;
+										break;
+									}
 									cout << "Bravo has returned, loading parties from the lounge." << endl;
 									for (i = 0; i < Lounge.NumParties; i++) // Load Customers that are waiting.
 									{
@@ -243,6 +236,11 @@ void main ()
 								break;
 			case CmdArrive:
 								cout << "Arrive Entered." << endl;
+								if (Alfa.NumSeats == 0 || Bravo.NumSeats == 0 || Lounge.NumSeats == 0)
+								{
+									cout << "Please initialize Alfa, Bravo, and Lounge before using this command." << endl;
+									break;
+								}
 								cout << "Please enter the plane they wish to board: ";
 								Temp.WhichPlane	= GetPlane ();
 								if (Temp.WhichPlane == -1) // -1 == Invalid Plane
@@ -278,6 +276,11 @@ void main ()
 											a = 0;
 											delete[] Alfa.Parties;
 											Alfa.Parties = new Party[Alfa.NumSeats];
+											if (Lounge.NumParties == 0)
+											{
+												cout << "Flight Complete." << endl;
+												break;
+											}
 											cout << "Alfa has landed, loading lounge." << endl;
 											for (i = 0; i <= Lounge.NumParties; i++) // Load waiting customers
 											{
@@ -356,6 +359,11 @@ void main ()
 											delete[] Bravo.Parties;
 											Bravo.Parties = new Party[Bravo.NumSeats];
 											b = 0;
+											if (Lounge.NumParties == 0)
+											{
+												cout << "Flight Complete." << endl;
+												break;
+											}
 											cout << "Bravo has returned, loading parties from the lounge." << endl;
 											for (i = 0; i < Lounge.NumParties; i++) // Load Customers that are waiting.
 											{

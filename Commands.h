@@ -3,9 +3,8 @@
 
 enum Commands	{
 				InvalidCmd = -1,
-				CmdStartup,
+				CmdStatus,
 				CmdHelp,
-				CmdHangar,
 				CmdAlfa,
 				CmdBravo,
 				CmdLounge,

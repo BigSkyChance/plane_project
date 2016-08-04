@@ -6,9 +6,8 @@ using namespace std;
 #include "ReadString.h"
 
 char * CmdStrings [NumCommands] =	{
-									"Startup",
+									"Status",
 									"Help",
-									"Hangar",
 									"Alfa",
 									"Bravo",
 									"Lounge",
@@ -23,7 +22,7 @@ Commands GetCommand ()
 	char *		pCmd;
 
 	pCmd	= ReadString ();
-	for (i = CmdStartup; i < NumCommands; i = (Commands) (i + 1))
+	for (i = CmdStatus; i < NumCommands; i = (Commands) (i + 1))
 		if (_strcmpi (pCmd, CmdStrings[i]) == 0)
 				{
 				delete [] pCmd;
