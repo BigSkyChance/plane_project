@@ -1,6 +1,10 @@
 # plane_project
 C++ Final Semester project, Created by Chancellor Griffin
 
+This is a fully functional terminal for a small airline. 
+The main outlines of this program were to showcase the ability to create classes and dynamically allocate memory depending on the
+needs of the airline on any given day.
+
 COSC1436.3S1
 SEMESTER PROJECT
 
